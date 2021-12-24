@@ -84,7 +84,7 @@ tp=ggmap(myMap)
 ggmap(myMap)
 
 #get lat and lon coordinates
-tpdatlatlon=mod_rm[,1:2]
+tpdatlatlon=mod_rm[,2:3]
 colnames(tpdatlatlon) <- c("Lon", "Lat")
 tpdat=data.frame(tpdatlatlon)
 moddf=data.frame(mod_std)
@@ -144,7 +144,7 @@ mtext("Percent Cumulative Eigenvalue [%]", side=4, line=3, col = "red", cex.axis
 eofm=jjasvd$u #EOF vectors
 dim(eofm)
 #[1] 856  45
-eofr=cbind(mod_rm[,1:2], eofm)
+eofr=cbind(mod_rm[,2:3], eofm)
 dim(eofr)
 #[1] 856  47 # 47 columns=lat, lon, plus 45 EOF vectors
 #Save EOFs
@@ -303,7 +303,7 @@ sum(!is.na(dato_O18))
 #[1] 197 nonNA values
 
 #mixed-mode reconstruction for every month
-f<- data.frame(cbind(mod_rm[, 3], clim_mod, sd_mod))
+f<- data.frame(cbind(mod_rm[, 1], clim_mod, sd_mod))
 climo<- f[f$V1 %in% dato[,2], ][,2]
 sdo<- f[f$V1 %in% dato[,2], ][,3]
 dato_O18_std<- (dato_O18 - climo)/sdo 
