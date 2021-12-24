@@ -286,16 +286,16 @@ legend("bottomleft", legend=c("pc4", "pc5", "pc6"),
        col=c("black", "red", "blue"), lty=1:3, bty = "n",text.font = 1,
        cex = 0.4)
 
-#Outliers Detection
-dato=read.csv("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/InputData/stations17-data-JJA-1997-2006-09-23.csv",header=TRUE)
+dato=read.csv("D:/O18Reconstructions/cleaned_original.csv",header=TRUE)
+dato<- dato[, -1]
 colnames(dato)[2:4]<- c("BoxID", "Lat", "Lon")
-colnames(dato)[5:34]<- colnames(mod_rm)[4:33]
+colnames(dato)[5:40]<- colnames(mod_rm)[4:39]
 IDloc<- dato[, 1:4]
 stnyr=dim(dato)
 stnyr
-#[1] 17 34 #17 grid boxes with stations, 
-#10 years (1997-2006), JJA =>30 months
-#First 4 columns: Stn name, stn ID, lat, lon
+#[1] 14 40 
+#14 stations
+#First 4 columns: Stn name, BoxID, Lat, Lon
 dato_O18<- dato[, 5:34]
 dim(dato_O18)
 #[1] 17 30
