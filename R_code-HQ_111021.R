@@ -296,53 +296,23 @@ stnyr
 #[1] 14 40 
 #14 stations
 #First 4 columns: Stn name, BoxID, Lat, Lon
-dato_O18<- dato[, 5:34]
+dato_O18<- dato[, 5:40]
 dim(dato_O18)
-#[1] 17 30
+#[1] 14 36
 sum(!is.na(dato_O18))
-#[1] 204 nonNA values
-datoutmin<- matrix(NA, nrow=17, ncol = 30)
-datoutmin2<- matrix(NA, nrow=17, ncol = 30)
-datoutmax<- matrix(NA, nrow=17, ncol = 30)
-min1<- c()
-min2<- c()
-max1<- c()
-for (i in 1:30){
-  sd1<- sd(as.matrix(dato_O18), na.rm=TRUE)
-  min1[i]<- mean(dato_O18[, i], na.rm=TRUE)-3*sd1
-  min2[i]<- mean(dato_O18[, i], na.rm=TRUE)-2*sd1
-  max1[i]<- mean(dato_O18[, i], na.rm=TRUE)+3*sd1
-  datoutmin[which(dato_O18[, i]>min1[i]), i]<- dato_O18[which(dato_O18[, i]>min1[i]), i]
-  datoutmin2[which(dato_O18[, i]>min2[i]), i]<- dato_O18[which(dato_O18[, i]>min2[i]), i]
-  datoutmax[which(dato_O18[, i]<max1[i]), i]<- dato_O18[which(dato_O18[, i]<max1[i]), i]
-}
-sum(!is.na(datoutmin)) 
-#[1] 204
-sum(!is.na(datoutmin2))
-#[1] 201
-sum(!is.na(datoutmax))
-#[1] 203
-dato_rmmin<- cbind(IDloc, datoutmin2)
-dato_rmmax<- cbind(IDloc, datoutmax)
+#[1] 197 nonNA values
 
-
-#4-mode reconstruction for every month
-dato_O18<- dato[, 5:34]
-dato_O18<- dato_rmmin[, 5:34]
+#mixed-mode reconstruction for every month
 f<- data.frame(cbind(mod_rm[, 3], clim_mod, sd_mod))
 climo<- f[f$V1 %in% dato[,2], ][,2]
 sdo<- f[f$V1 %in% dato[,2], ][,3]
-dato_O18_std<- (dato_O18[-17, ] - climo)/sdo 
-#model data does not have correspondences for the last station with BoxID 909
-dim(dato_O18[-17, ])
-#[1] 16 30
-dato_std<- data.frame(dato[-17, 1:4], dato_O18_std)
+dato_O18_std<- (dato_O18 - climo)/sdo 
+
+dato_std<- data.frame(dato[, 1:4], dato_O18_std)
 colnames(dato_std)<- colnames(dato)
 
 nonNA<- colSums(!is.na(dato_std))
 nonNA
-#Jun 1998 (dato[,8]), 1998 Aug (dato[, 10]), 1999 Aug (dato[, 13]) and Jun 2006(dato[, 32]) 
-#have only 4 obs. 
 
 recon=matrix(0,nrow=856,ncol=33)
 for (i in 5:34) {y=complete.cases(dato_std[,i])
@@ -411,7 +381,7 @@ recon3[,2]=mod_rm[,1]
 recon3[,3]=mod_rm[,2]
 #Put proper header
 jja=rep(c("Jun","Jul","Aug"),10)
-yr2=rep(1997:2006,each=3)
+yr2=rep(1997:2008,each=3)
 hdjja1=paste(jja,yr2)
 colnames(recon3)<-c("BoxID","Lon","Lat", hdjja1)
 frecon3<- recon3[, c(7, 9, 12, 31)]
@@ -494,17 +464,17 @@ for(i in 4:33){
 }
 
 #Plot the observed data and save the figures in a folder
-setwd("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/2017-10-28Computing/ObservedFigs")
+setwd("D:/O18Reconstructions/ObservedFigs")
 rm(list=c("myMap"))
 #myLocation <- c(10, 20, 115, 50)
 #maptype = c("roadmap", "terrain", "satellite", "hybrid")
 myMap = get_map(location = c(60, 25, 110, 45), source="google", maptype="terrain", crop=TRUE)
 ggmap(myMap)
 tpdatlatlon=data.frame(dato)
-for(i in 5:34){
+for(i in 5:ncol(dato)){
   scale=pmax(pmin(dato[,i],10),-10) 
   p<- ggmap(myMap) + geom_point(data=tpdatlatlon, mapping=aes(x=Lon, y=Lat, colour=scale), size=3.6) +
-    scale_colour_gradient2(limits=c(-10,10),low="blue",mid="white", 
+    scale_colour_gradient2(limits=c(-27,5),low="blue",mid="white", 
                            midpoint=0, high = "red", space="rgb")+
     ggtitle(paste("Observed O18 Anomalies:", hdjja1[i-4])) +
     theme(plot.title = element_text(hjust = 0.5),legend.key.height = unit(0.8, "cm"), legend.key.width = unit(0.5, "cm")) + 
