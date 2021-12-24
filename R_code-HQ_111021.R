@@ -1,6 +1,5 @@
 rm(list=ls(all=TRUE)) #Clear the environment.
 #set up the working file.
-setwd("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/20200904_data_visulization")
 library(RColorBrewer)
 library(zoo)
 library(dplyr)
@@ -12,7 +11,7 @@ library(ggmap)
 library(matrixStats)
 
 #Read model data
-mod_dt <- read_xls("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/20200904_data_visulization/data_O18.xls")
+mod_dt <- read_xls("D:/O18Reconstructions/data_O18.xls")
 
 #Extract summer months in model data 
 #Work on the column names
@@ -30,7 +29,7 @@ col_names_mod<- colnames(mod_data)
 
 #Project to the desired area
 #Read the 2016-09-24 reconstructed data to get lat and lon coordinates
-tpdat1=read.csv("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/InputData/reconout160924r.csv", header=TRUE)
+tpdat1=read.csv("D:/O18Reconstructions/reconout160924r.csv", header=TRUE)
 tpdatlatlon=tpdat1[,2:3] #909 obs. of 2 variables
 colnames(tpdatlatlon) <- c("Lon","Lat")
 tpdat=data.frame(tpdatlatlon)
@@ -140,6 +139,7 @@ plot(modn,varexp, type="o",col="red",lwd=1.5,
 axis(4, col="red",col.ticks="red", col.axis="red", )
 mtext("Percent Cumulative Eigenvalue [%]", side=4, line=3, col = "red", cex.axis=1.5)
 
+# SVD EOF
 #Mark lat and lon data as the first two columns of the EOF data 
 eofm=jjasvd$u #EOF vectors
 dim(eofm)
@@ -147,14 +147,23 @@ dim(eofm)
 eofr=cbind(mod_rm[,1:2], eofm)
 dim(eofr)
 #[1] 856  47 # 47 columns=lat, lon, plus 45 EOF vectors
-#Save 4 EOFs and 6 EOFs
+#Save EOFs
 colnames(eofm, do.NULL = FALSE)
-eofm4=eofr[, 1:6]
-eofm6=eofr[,1:8]
-colnames(eofm4)<- c("Lon", "Lat", "E1","E2","E3","E4")
-colnames(eofm6) <- c("Lon", "Lat", "E1","E2","E3","E4","E5","E6")
+eofm3=eofr[, 1:5] # 6
+eofm4=eofr[,1:6] # 8 
+#eofm5=eofr[,1:7] # 5
+#eofm6=eofr[,1:8] # 4
+#eofm7=eofr[,1:9] # 7
+colnames(eofm3)<- c("Lon", "Lat", "E1","E2","E3")
+colnames(eofm4) <- c("Lon", "Lat", "E1","E2","E3","E4")
+#colnames(eofm5) <- c("Lon", "Lat", "E1","E2","E3","E4","E5")
+#colnames(eofm6) <- c("Lon", "Lat", "E1","E2","E3","E4","E5","E6")
+#colnames(eofm7) <- c("Lon", "Lat", "E1","E2","E3","E4","E5","E6","E7")
+eofm3f=data.frame(eofm3)
 eofm4f=data.frame(eofm4)
-eofm6f=data.frame(eofm6) #The first six EOFs in data frame
+#eofm5f=data.frame(eofm5)
+#eofm6f=data.frame(eofm6)
+#eofm7f=data.frame(eofm7)
 
 
 #Plot the EOFs
@@ -172,13 +181,13 @@ myMap = get_map(location = myLocation, source="google", maptype="terrain", crop=
 tp=ggmap(myMap)
 ggmap(myMap)
 #Read the EOF data for TP
-tpdat=data.frame(eofm6)
+tpdat=data.frame(eofm4)
 #plot the first six EOFs and save the figures
-setwd("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/2017-10-28Computing/EOFs")
-for(i in 1:6){
+setwd("D:/O18Reconstructions/EOFs")
+for(i in 1:4){
   scale=tpdat[,i+2]
   #ggplot of the first six EOFs
-  p<- ggmap(myMap) + geom_point(data=tpdat, mapping=aes(x=Lon, y=Lat, colour=scale), size=2) +
+  p<- ggmap(myMap) + geom_point(data=tpdat, mapping=aes(x=Lon, y=Lat, colour=scale), size=2.5) +
     scale_colour_gradient2(limits=c(-0.11,0.11),low="blue", mid="white", midpoint=0, high = "red", space="rgb") +
     ggtitle(paste("EOF",i, sep="")) +
     theme(plot.title = element_text(hjust = 0.5),legend.key.height = unit(1, "cm"), legend.key.width = unit(0.5, "cm"))+ 
@@ -203,7 +212,7 @@ ggmap(myMap) + geom_point(data=tpdat, mapping=aes(x=Lon, y=Lat, colour=O18), siz
 
 #Plot PCs
 #Plot the first three PCs
-setwd("C:/Users/hniqd/OneDrive/Documents/TP2020-07-03YaoChen/2017-10-28Computing/PCs")
+setwd("D:/O18Reconstructions/PCs")
 time1 = seq(1997,2011, len = 45)
 dev.off()
 for(i in 1:3){
