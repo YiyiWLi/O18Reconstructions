@@ -30,22 +30,22 @@ col_names_mod<- colnames(mod_data)
 #Project to the desired area
 #Read the 2016-09-24 reconstructed data to get lat and lon coordinates
 tpdat1=read.csv("D:/O18Reconstructions/reconout160924r.csv", header=TRUE)
-tpdatlatlon=tpdat1[,2:3] #909 obs. of 2 variables
-colnames(tpdatlatlon) <- c("Lon","Lat")
+tpdatlatlon=tpdat1[,1:3] #909 obs. of 2 variables
+colnames(tpdatlatlon) <- c("BoxID","Lon","Lat")
 tpdat=data.frame(tpdatlatlon)
 
 #Extract the corresponding rows from the model data to match the Lon-Lat of interested.
 mod_data<- data.frame(mod_data)
 colnames(mod_data)<- col_names_mod
-mod_data1<- merge(mod_data, tpdat)# 909 obs. of 48 variables
+mod_data1<- merge(mod_data[, -1], tpdat)# 909 obs. of 48 variables
 attach(mod_data1)
-mod_data2<- mod_data1[order(Lat, Lon), ]
+mod_data2<- mod_data1[order(BoxID), ]
 detach(mod_data1)
-mod_data2$BoxID<- 1:909
 row.names(mod_data2)<- NULL
+mod_data2 <- mod_data2 %>% relocate(BoxID, .before = Lon)
 #mod_data2 909 obs. of 48 variables with the same BoxID as the previous model data.
 names(mod_data2)
-#"Lon" "Lat" "BoxID" "1997 Jun" ...
+#"BoxID" "Lon" "Lat" "1997 Jun" ...
 
 #Remove NA and leave the data with values.
 #which(is.na(mod_data2))
