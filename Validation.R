@@ -2,17 +2,21 @@
 library(ggplot2)
 library(reshape2)
 
-#load Eigenvalues data
+# load observation and reconstruction data
 load(file="data/OBdata.RData")
 load(file="data/Reconstruction.RData")
 
+# get station name and corresponding grid id
 stn_name<-dato[,1]
 grid_id=dato[,2]
 
+# create time sequence from 1997 to 2005
 t1=seq(1997,2006,len=27)
-par(mfrow = c(3, 3))  # 4 rows and 4 columns
+# set figure with 4 rows and 4 columns
+par(mfrow = c(3, 3))  
 par(mgp=c(2,1,0))
 par(mar=c(3,3,2,3))
+# plot validation figure including reconstruction data and observation data
 for (i in 1:9) { 
   plot(t1, dato[i,5:31],type="o", ylim=c(-50,10),
        xlab="",ylab="",
