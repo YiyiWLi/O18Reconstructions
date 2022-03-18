@@ -4,8 +4,6 @@ library(matrixStats)
 # load remote-sensing data
 load(file="data/RSdata.RData")
 
-#Remove NA and leave the data with values
-mod_rm<- na.omit(mod_rm)
 mod_o18<- mod_rm[, 4:48]
 #compute mean of remote-sensing data
 clim_mod<- rowMeans(as.matrix(mod_o18), na.rm=TRUE)  
